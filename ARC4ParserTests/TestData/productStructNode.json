@@ -1,0 +1,76 @@
+{
+  "kind": "struct",
+  "name": "Product",
+  "fields": [
+    {
+      "name": "version",
+      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+    },
+    {
+      "name": "seed",
+      "type": { "kind": "primitive", "name": "string", "size": 22 }
+    },
+    {
+      "name": "createdDate",
+      "type": { "kind": "primitive", "name": "date", "size": 64 }
+    },
+    {
+      "name": "price",
+      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+    },
+    {
+      "name": "priceToken",
+      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+    },
+    {
+      "name": "royalty",
+      "type": { "kind": "primitive", "name": "uint", "size": 16 }
+    },
+    { "name": "seller", "type": { "kind": "primitive", "name": "address" } },
+    {
+      "name": "categoryId",
+      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+    },
+    {
+      "name": "groupSeed",
+      "type": { "kind": "primitive", "name": "string", "size": 22 }
+    },
+    {
+      "name": "expirationDate",
+      "type": { "kind": "primitive", "name": "date", "size": 64 }
+    },
+    {
+      "name": "totalCodes",
+      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+    },
+    {
+      "name": "orderCount",
+      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+    },
+    {
+      "name": "codesBitmap",
+      "type": { "kind": "primitive", "name": "uint", "size": 128 }
+    },
+    {
+      "name": "codeManifest",
+      "type": {
+        "kind": "struct",
+        "name": "CodeManifest",
+        "fields": [
+          {
+            "name": "manifestType",
+            "type": { "kind": "primitive", "name": "uint", "size": 16 }
+          },
+          {
+            "name": "dataLocation",
+            "type": { "kind": "primitive", "name": "string" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "details",
+      "type": { "kind": "primitive", "name": "bytes", "converter": "DetailsConverter" }
+    }
+  ]
+}
