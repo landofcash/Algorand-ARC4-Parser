@@ -22,17 +22,17 @@
                 return fieldValue.ToString();
             }
 
-            if (fieldName == "uint" && fieldSize == 16)
+            if (fieldName == "uint" && fieldSize == 2)
             {
                 return Convert.ToUInt16(fieldValue);
             }
 
-            if (fieldName == "uint" && fieldSize == 32)
+            if (fieldName == "uint" && fieldSize == 4)
             {
                 return Convert.ToUInt32(fieldValue);
             }
 
-            if (fieldName == "uint" && fieldSize == 64)
+            if (fieldName == "uint" && fieldSize == 8)
             {
                 return Convert.ToUInt64(fieldValue);
             }

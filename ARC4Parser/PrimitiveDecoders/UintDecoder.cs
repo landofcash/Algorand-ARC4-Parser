@@ -12,7 +12,7 @@ public class UintDecoder : IPrimitiveDecoder
         if (!size.HasValue)
             throw new InvalidOperationException("Size required for uint decoding.");
 
-        int byteLen = size.Value / 8;
+        int byteLen = size.Value;
         byte[] buf = reader.ReadBytes(byteLen);
         var v = BigInteger.Zero;
         foreach (var b in buf)

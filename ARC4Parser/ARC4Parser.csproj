@@ -1,54 +1,65 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Algorand ARC4 Parser</Title>
-    <Authors>Foxzard</Authors>
-    <Company>Aldemart</Company>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Algorand Arc4 Parser for c# classes</Description>
-    <PackageProjectUrl>https://github.com/landofcash/Algorand-ARC4-Parser</PackageProjectUrl>
-    <PackageIcon>ARC4Parser-logo.png</PackageIcon>
-    <RepositoryUrl>https://github.com/landofcash/Algorand-ARC4-Parser</RepositoryUrl>
-    <PackageTags>Algorand, arc4, ABI, parser</PackageTags>
-    <PackageReleaseNotes>Vibecoded</PackageReleaseNotes>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RootNamespace>Aldemart.ARC4Parser</RootNamespace>
-    <PackageId>AlgorandARC4Parser</PackageId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Version>1.0.2+$([System.DateTime]::Now.ToString("yyyyMMdd'T'HHmmss"))</Version>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Algorand ARC4 Parser</Title>
+		<Authors>Foxzard</Authors>
+		<Company>Aldemart</Company>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>Algorand Arc4 Parser for c# classes</Description>
+		<PackageProjectUrl>https://github.com/landofcash/Algorand-ARC4-Parser</PackageProjectUrl>
+		<PackageIcon>ARC4Parser-logo.png</PackageIcon>
+		<RepositoryUrl>https://github.com/landofcash/Algorand-ARC4-Parser</RepositoryUrl>
+		<PackageTags>Algorand;arc4;ABI;parser</PackageTags>
+		<PackageReleaseNotes>Vibecoded</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RootNamespace>Aldemart.ARC4Parser</RootNamespace>
+		<PackageId>AlgorandARC4Parser</PackageId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="assets\ARC4Parser-logo.png" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
+	  <WarningLevel>8</WarningLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
+	  <WarningLevel>8</WarningLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
-    <PackageReference Include="SimpleBase" Version="5.4.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
+		<PackageReference Include="SimpleBase" Version="5.4.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="assets\ARC4Parser-logo.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="assets\ARC4Parser-logo.png">
+			<Pack>true</Pack>
+			<PackagePath></PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="README.md">
+			<Pack>true</Pack>
+			<PackagePath></PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="assets\ARC4Parser-logo.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 </Project>

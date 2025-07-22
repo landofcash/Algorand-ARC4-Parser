@@ -7,7 +7,8 @@ public class DateDecoder : IPrimitiveDecoder
     public DecodeResult Decode(BinaryReader reader, int? size = null)
     {
         ulong seconds = ReadUInt64BE(reader);
-        DateTime? dt = seconds == 0 ? (DateTime?)null : DateTimeOffset.FromUnixTimeSeconds((long)seconds).UtcDateTime;
+        if(seconds==0 || seconds>253402300799) return new DecodeResult { Value = null, Offset = 8 };
+        DateTime? dt = DateTimeOffset.FromUnixTimeSeconds((long)seconds).UtcDateTime;
         return new DecodeResult { Value = dt, Offset = 8 };
     }
     
