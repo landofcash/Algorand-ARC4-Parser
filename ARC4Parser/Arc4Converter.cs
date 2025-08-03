@@ -1,15 +1,23 @@
 ﻿namespace Aldemart.ARC4Parser
 {
-    using System.Reflection;
     using Aldemart.ARC4Parser.ARC4Types;
     using Aldemart.ARC4Parser.Nodes;
-
+    using System.Reflection;
+    using Microsoft.Extensions.Logging;
 
     public class Arc4Converter
     {
+        private readonly ILogger _logger;
+
+        public Arc4Converter(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public T Process<T>(StructTypeNode typeNode, byte[] value) where T : new()
         {
-            var decoded = Arc4Parser.DecodeValue(typeNode, value);
+            Arc4Parser parser = new Arc4Parser(_logger);
+            var decoded = parser.DecodeValue(typeNode, value);
             if (decoded == null || decoded.Value==null) throw new Exception("Failed to decode DecodeValue");
             return ProcessStruct<T>(typeNode, (Dictionary<string, object?>)decoded.Value);
         }

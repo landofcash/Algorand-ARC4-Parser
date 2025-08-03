@@ -4,7 +4,7 @@
   "fields": [
     {
       "name": "version",
-      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+      "type": { "kind": "primitive", "name": "uint", "size": 4 }
     },
     {
       "name": "seed",
@@ -12,24 +12,24 @@
     },
     {
       "name": "createdDate",
-      "type": { "kind": "primitive", "name": "date", "size": 64 }
+      "type": { "kind": "primitive", "name": "date", "size": 8 }
     },
     {
       "name": "price",
-      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+      "type": { "kind": "primitive", "name": "uint", "size": 8 }
     },
     {
       "name": "priceToken",
-      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+      "type": { "kind": "primitive", "name": "uint", "size": 8 }
     },
     {
       "name": "royalty",
-      "type": { "kind": "primitive", "name": "uint", "size": 16 }
+      "type": { "kind": "primitive", "name": "uint", "size": 2 }
     },
     { "name": "seller", "type": { "kind": "primitive", "name": "address" } },
     {
       "name": "categoryId",
-      "type": { "kind": "primitive", "name": "uint", "size": 64 }
+      "type": { "kind": "primitive", "name": "uint", "size": 8 }
     },
     {
       "name": "groupSeed",
@@ -37,19 +37,19 @@
     },
     {
       "name": "expirationDate",
-      "type": { "kind": "primitive", "name": "date", "size": 64 }
+      "type": { "kind": "primitive", "name": "date", "size": 8 }
     },
     {
       "name": "totalCodes",
-      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+      "type": { "kind": "primitive", "name": "uint", "size": 4 }
     },
     {
       "name": "orderCount",
-      "type": { "kind": "primitive", "name": "uint", "size": 32 }
+      "type": { "kind": "primitive", "name": "uint", "size": 4 }
     },
     {
       "name": "codesBitmap",
-      "type": { "kind": "primitive", "name": "uint", "size": 128 }
+      "type": { "kind": "primitive", "name": "uint", "size": 16 }
     },
     {
       "name": "codeManifest",
@@ -59,7 +59,7 @@
         "fields": [
           {
             "name": "manifestType",
-            "type": { "kind": "primitive", "name": "uint", "size": 16 }
+            "type": { "kind": "primitive", "name": "uint", "size": 2 }
           },
           {
             "name": "dataLocation",

@@ -3,6 +3,7 @@
 using System.Buffers.Binary;
 using ARC4Parser.Nodes;
 using ARC4Parser.PrimitiveDecoders;
+using Microsoft.Extensions.Logging;
 
 public class PrimitiveDecoderRegistry
 {
@@ -11,13 +12,14 @@ public class PrimitiveDecoderRegistry
     public IPrimitiveDecoder? GetDecoder(string typeName) => Decoders.FirstOrDefault(d => d.CanDecode(typeName));
 }
 
-public static class Arc4Parser
+public class Arc4Parser
 {
-    public static bool DEBUG_PARSER = true;
-    public static readonly PrimitiveDecoderRegistry PrimitiveDecoderRegistry = new();
+    private readonly ILogger _logger;
+    public readonly PrimitiveDecoderRegistry PrimitiveDecoderRegistry = new();
 
-    static Arc4Parser()
+    public Arc4Parser(ILogger logger)
     {
+        _logger = logger;
         List<IPrimitiveDecoder> defaultPrimitiveDecoders =
         [
             new UintDecoder(),
@@ -33,7 +35,7 @@ public static class Arc4Parser
         }
     }
 
-    public static DecodeResult DecodeValue(TypeNode type, byte[] buffer, int offset = 0)
+    public DecodeResult DecodeValue(TypeNode type, byte[] buffer, int offset = 0)
     {
         //offset is the pointer on the data.
         if (type is PrimitiveFieldType primitiveType)
@@ -66,7 +68,7 @@ public static class Arc4Parser
         throw new NotSupportedException($"Unsupported type: {type.GetType().Name}");
     }
 
-    private static DecodeResult DecodePrimitive(PrimitiveFieldType primitiveFieldType, byte[] buffer, int offset)
+    private DecodeResult DecodePrimitive(PrimitiveFieldType primitiveFieldType, byte[] buffer, int offset)
     {
         var decoder = PrimitiveDecoderRegistry.GetDecoder(primitiveFieldType.Name!);
         if (decoder == null)
@@ -77,23 +79,14 @@ public static class Arc4Parser
         using var reader = new BinaryReader(memoryStream);
         memoryStream.Seek(offset, SeekOrigin.Begin);
         var result = decoder.Decode(reader, primitiveFieldType.Size);
-
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine(
-                $"Primitive: {primitiveFieldType.Name}{(primitiveFieldType.Size.HasValue ? $"({primitiveFieldType.Size})" : "")} = {result.Value}, length: {result.Offset} bytes");
-        }
-
+        _logger.LogDebug(
+            $"Primitive: {primitiveFieldType.Name}{(primitiveFieldType.Size.HasValue ? $"({primitiveFieldType.Size})" : "")} = {result.Value}, length: {result.Offset} bytes");
         return result;
     }
 
-    private static DecodeResult DecodeStaticArray(TypeNode elementType, int length, byte[] buffer, int offset)
+    private DecodeResult DecodeStaticArray(TypeNode elementType, int length, byte[] buffer, int offset)
     {
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"StaticArray[{length}] starting at offset {offset}");
-        }
-
+        _logger.LogDebug($"StaticArray[{length}] starting at offset {offset}");
         var array = new List<object>();
         var currentOffset = offset;
         for (int i = 0; i < length; i++)
@@ -102,23 +95,14 @@ public static class Arc4Parser
             array.Add(result.Value!);
             currentOffset = result.Offset;
         }
-
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"StaticArray end, total length: {currentOffset - offset} bytes");
-        }
-
+        _logger.LogDebug($"StaticArray end, total length: {currentOffset - offset} bytes");
         return new DecodeResult { Value = array, Offset = currentOffset };
     }
 
-    private static DecodeResult DecodeDynamicArray(TypeNode elementType, byte[] buffer, int offset)
+    private DecodeResult DecodeDynamicArray(TypeNode elementType, byte[] buffer, int offset)
     {
         var length = BitConverter.ToUInt16(buffer, offset);
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"DynamicArray with {length} elements starting at offset {offset}");
-        }
-
+        _logger.LogDebug($"DynamicArray with {length} elements starting at offset {offset}");
         var array = new List<object>();
         var currentOffset = offset + 2;
         for (int i = 0; i < length; i++)
@@ -127,22 +111,13 @@ public static class Arc4Parser
             array.Add(result.Value!);
             currentOffset = result.Offset;
         }
-
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"DynamicArray end, total length: {currentOffset - offset} bytes (including 2-byte prefix)");
-        }
-
+        _logger.LogDebug($"DynamicArray end, total length: {currentOffset - offset} bytes (including 2-byte prefix)");
         return new DecodeResult { Value = array, Offset = currentOffset };
     }
 
-    private static DecodeResult DecodeContainer(List<TypeNode> components, byte[] buffer, int offset)
+    private DecodeResult DecodeContainer(List<TypeNode> components, byte[] buffer, int offset)
     {
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"Container with {components.Count} elements starting at offset {offset}");
-        }
-        
+        _logger.LogDebug($"Container with {components.Count} elements starting at offset {offset}");
         var values = new List<object>();
         var currentOffset = offset;
         foreach (var component in components)
@@ -152,10 +127,7 @@ public static class Arc4Parser
             {
                 int pointerValue = BitConverter.ToUInt16(buffer, currentOffset);
                 int dataOffset = offset + pointerValue;
-                if (DEBUG_PARSER)
-                {
-                    Console.WriteLine($"Dynamic Container, Data offset {dataOffset}");
-                }
+                _logger.LogDebug($"Dynamic Container, Data offset {dataOffset}");
                 var result = DecodeValue(component, buffer, dataOffset);
                 values.Add(result.Value!);
                 currentOffset += 2;
@@ -168,22 +140,16 @@ public static class Arc4Parser
             }
         }
 
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"Container end, total length: {currentOffset - offset} bytes");
-        }
+        _logger.LogDebug($"Container end, total length: {currentOffset - offset} bytes");
 
         return new DecodeResult { Value = values, Offset = currentOffset };
     }
 
-    private static DecodeResult DecodeStruct(StructTypeNode s, byte[] buffer, int offset)
+    private DecodeResult DecodeStruct(StructTypeNode s, byte[] buffer, int offset)
     {
         // Determine if this struct is dynamic (contains any dynamic fields)
         bool dynamicStruct = IsDynamic(s);
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"Struct {s.Name} Dynamic:{dynamicStruct} with {s.Fields?.Count} fields starting at offset {offset}");
-        }
+        _logger.LogDebug($"Struct {s.Name} Dynamic:{dynamicStruct} with {s.Fields?.Count} fields starting at offset {offset}");
         // Remember start of the head region
         int headStart = offset;
         int currentOffset = offset;
@@ -196,19 +162,16 @@ public static class Arc4Parser
         foreach (var field in s.Fields)
         {
             if (field.Type == null) throw new ApplicationException($"field.Type is null for field: {field.Name}");
-            if (DEBUG_PARSER)
-            {
-                Console.WriteLine($"Decoding field: {field.Name} type:{field.Type.Name} {field.Type.Kind}");
-            }
+            
+            _logger.LogDebug($"Decoding field: {field.Name} type:{field.Type.Name} {field.Type.Kind}");
+            
             if (IsDynamic(field.Type))
             {
                 // Dynamic field: read a 2-byte big-endian pointer into the tail
                 ushort pointer = BinaryPrimitives.ReadUInt16BigEndian(new ReadOnlySpan<byte>(buffer, currentOffset, 2));
                 int dataOffset = headStart + pointer;
-                if (DEBUG_PARSER)
-                {
-                    Console.WriteLine($"Dynamic field pointer at {currentOffset} points to offset: {dataOffset}");
-                }
+                _logger.LogDebug($"Dynamic field pointer at {currentOffset} points to offset: {dataOffset}");
+                
                 // Decode from the tail without advancing the head
                 var value = DecodeValue(field.Type, buffer, dataOffset);
                 values.Add(value);
@@ -234,10 +197,7 @@ public static class Arc4Parser
         //    - For dynamic structs, the outer pointer is 2 bytes
         //    - Otherwise, jump to end of head
         offset = dynamicStruct ? headStart + 2 : currentOffset;
-        if (DEBUG_PARSER)
-        {
-            Console.WriteLine($"Struct end, total length: {offset-headStart} bytes, offset:{offset}");
-        }
+        _logger.LogDebug($"Struct end, total length: {offset-headStart} bytes, offset:{offset}");
 
         return new DecodeResult
         {
@@ -250,7 +210,7 @@ public static class Arc4Parser
     /// Determines whether the given type node represents a dynamic (variable‐length) type,
     /// mirroring the ARC-4 TypeNode logic.
     /// </summary>
-    private static bool IsDynamic(TypeNode t)
+    private bool IsDynamic(TypeNode t)
     {
         switch (t.Kind)
         {
