@@ -20,33 +20,33 @@ To use this library, include the project in your .NET solution or add it as a de
 
 To parse ARC4 data, define your data model and annotate it with `[Arc4Property]` attributes.
 
-You also need to create a JSON mapping file, example:
+You also need to create a JSON mapping file, example (for fixed sized primitive properties specify size in bytes.)
 
 ```json
 {
     "kind": "struct",
     "name": "Product",
     "fields": [
-        { "name": "version", "type": { "kind": "primitive", "name": "uint", "size": 32 } },
+        { "name": "version", "type": { "kind": "primitive", "name": "uint", "size": 4 } },
         { "name": "seed", "type": { "kind": "primitive", "name": "string", "size": 22 } },
-        { "name": "createdDate", "type": { "kind": "primitive", "name": "date", "size": 64 } },
-        { "name": "price", "type": { "kind": "primitive", "name": "uint", "size": 64 } },
-        { "name": "priceToken", "type": { "kind": "primitive", "name": "uint", "size": 64 } },
-        { "name": "royalty", "type": { "kind": "primitive", "name": "uint", "size": 16 } },
+        { "name": "createdDate", "type": { "kind": "primitive", "name": "date", "size": 8 } },
+        { "name": "price", "type": { "kind": "primitive", "name": "uint", "size": 8 } },
+        { "name": "priceToken", "type": { "kind": "primitive", "name": "uint", "size": 8 } },
+        { "name": "royalty", "type": { "kind": "primitive", "name": "uint", "size": 2 } },
         { "name": "seller", "type": { "kind": "primitive", "name": "address" } },
-        { "name": "categoryId", "type": { "kind": "primitive", "name": "uint", "size": 64 } },
+        { "name": "categoryId", "type": { "kind": "primitive", "name": "uint", "size": 8 } },
         { "name": "groupSeed", "type": { "kind": "primitive", "name": "string", "size": 22 } },
-        { "name": "expirationDate", "type": { "kind": "primitive", "name": "date", "size": 64 } },
-        { "name": "totalCodes", "type": { "kind": "primitive", "name": "uint", "size": 32 } },
-        { "name": "orderCount", "type": { "kind": "primitive", "name": "uint", "size": 32 } },
-        { "name": "codesBitmap", "type": { "kind": "primitive", "name": "uint", "size": 128 } },
+        { "name": "expirationDate", "type": { "kind": "primitive", "name": "date", "size": 8 } },
+        { "name": "totalCodes", "type": { "kind": "primitive", "name": "uint", "size": 4 } },
+        { "name": "orderCount", "type": { "kind": "primitive", "name": "uint", "size": 4 } },
+        { "name": "codesBitmap", "type": { "kind": "primitive", "name": "uint", "size": 16 } },
         {
             "name": "codeManifest",
             "type": {
                 "kind": "struct",
                 "name": "CodeManifest",
                 "fields": [
-                    { "name": "manifestType", "type": { "kind": "primitive", "name": "uint", "size": 16 } },
+                    { "name": "manifestType", "type": { "kind": "primitive", "name": "uint", "size": 2 } },
                     { "name": "dataLocation", "type": { "kind": "primitive", "name": "string" } }
                 ]
             }
@@ -72,6 +72,8 @@ public class Product
     [Arc4Property("price")]
     public ulong Price { get; set; }
 
+    ... // Other properties
+
     [Arc4Property("details", typeof(DetailsConverter))]
     public ProductDetails Details { get; set; } = new();
 }
@@ -87,14 +89,17 @@ public class ProductDetails
 ### Decoding Example
 
 ```csharp
-string json = File.ReadAllText("productStructNode.json");
+string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "productStructNode.json");
+string json = File.ReadAllText(jsonFilePath);
 StructTypeNode? structTypeNode = JsonConvert.DeserializeObject<StructTypeNode>(json);
+if (structTypeNode == null) throw new Exception("Can't deserialize json");
+            
 string base64EncodedData = "AAAAAW1YamFmUW44UWtDQjUyaWlvd0JMY2cAAAAAaHQX5QAAAAAAHl1wAAAAAAAAAAAAZDn57aMrdoS8ODz5n0n0D9frQzN/x2eW4aODv2yHiiG7AAAAAAAAAA" +
-                           "FtWGphZlFuOFFrQ0I1Mmlpb3dCTGNnAAAAAGiKo/AAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAlgDVAAEABAA5aHR0cHM6Ly9jZG4uYWxkZW1hcnQuY29tL2NvZGVzL2" +
-                           "1YamFmUW44UWtDQjUyaWlvd0JMY2cudHh0ADlzyywqLlHISy1XKCjKTylNLnnUsFA/Kb8itRhE6qbrFeSlA4W8SoGqEsHqSlKBTKhiLpBATmZeKgA=";
+                            "FtWGphZlFuOFFrQ0I1Mmlpb3dCTGNnAAAAAGiKo/AAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAlgDVAAEABAA5aHR0cHM6Ly9jZG4uYWxkZW1hcnQuY29tL2NvZGVzL2" +
+                            "1YamFmUW44UWtDQjUyaWlvd0JMY2cudHh0ADlzyywqLlHISy1XKCjKTylNLnnUsFA/Kb8itRhE6qbrFeSlA4W8SoGqEsHqSlKBTKhiLpBATmZeKgA=";
 byte[] buffer = Convert.FromBase64String(base64EncodedData);
 
-Arc4Converter converter = new Arc4Converter();
+Arc4Converter converter = new Arc4Converter(Logger);
 Product product = converter.Process<Product>(structTypeNode, buffer);
 ```
 
@@ -104,7 +109,7 @@ You can implement custom converters for specialized data types by inheriting fro
 
 ## Test Examples
 
-The project includes a test project (`ARC4ParserTests`) with examples of how to use the library. Below is a sample test model:
+The project includes a test project (`ARC4ParserTests`) with examples of how to use the library.
 
 ## Contributing
 
