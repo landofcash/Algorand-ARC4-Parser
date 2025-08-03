@@ -1,11 +1,11 @@
 ﻿namespace Aldemart.ARC4Parser.Nodes;
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 public class FieldNode
 {
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string? Name { get; set; }
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public TypeNode? Type { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.4+$([System.DateTime]::Now.ToString("yyyyMMdd'T'HHmmss"))</Version>
+		<Version>1.0.5+$([System.DateTime]::Now.ToString("yyyyMMdd'T'HHmmss"))</Version>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -43,7 +43,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
 		<PackageReference Include="SimpleBase" Version="5.4.1" />
 	</ItemGroup>

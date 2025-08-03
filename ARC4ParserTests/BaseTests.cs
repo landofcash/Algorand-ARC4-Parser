@@ -1,4 +1,4 @@
-﻿namespace ARC4ParserTests;
+﻿namespace Aldemart.ARC4ParserTests;
 
 using Microsoft.Extensions.Logging;
 

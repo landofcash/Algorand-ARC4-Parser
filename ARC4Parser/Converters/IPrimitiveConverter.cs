@@ -1,4 +1,4 @@
-﻿namespace Aldemart.ARC4Parser.PrimitiveDecoders;
+﻿namespace Aldemart.ARC4Parser.Converters;
 
 public interface IPrimitiveConverter
 {

@@ -105,7 +105,12 @@ Product product = converter.Process<Product>(structTypeNode, buffer);
 
 ### Custom Converters
 
-You can implement custom converters for specialized data types by inheriting from `Arc4Converter`.
+You can implement custom converters for specialized data types by inheriting from `IPrimitiveConverter`.
+Note: Converter must be specified in the Attribute: 
+```
+[Arc4Property("codesBitmap", typeof(ARC4IntBitmapConverter))]
+public string CodesBitmap { get; set; }
+```
 
 ## Test Examples
 

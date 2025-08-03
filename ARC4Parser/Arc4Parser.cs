@@ -167,7 +167,7 @@ public class Arc4Parser
         {
             if (field.Type == null) throw new ApplicationException($"field.Type is null for field: {field.Name}");
             
-            _logger.LogDebug($"Decoding field: {field.Name} type:{field.Type.Name} {field.Type.Kind}");
+            _logger.LogDebug($"Decoding field: {field.Name} type:{field.Type.Name} {field.Type.GetType().Name}");
             
             if (IsDynamic(field.Type))
             {
@@ -216,47 +216,36 @@ public class Arc4Parser
     /// </summary>
     private bool IsDynamic(TypeNode t)
     {
-        switch (t.Kind)
+        if (t is PrimitiveFieldType)
         {
-            case "primitive":
-            {
-                var p = (PrimitiveFieldType)t;
-                // string without a fixed size is dynamic
-                if (p.Name == "string" && !p.Size.HasValue) return true;
-                // bytes without a fixed size are dynamic
-                if (p.Name == "bytes" && !p.Size.HasValue) return true;
-                // all other primitives are static
-                return false;
-            }
-
-            case "array":
-            {
-                var a = (ArrayTypeNode)t;
-                // dynamic array (no fixed Length)
-                if (!a.Length.HasValue) return true;
-                // static array is dynamic if its element type is
-                if (a.ElementType == null) throw new ApplicationException($"Array is not defined for {a.Name}");
-                return IsDynamic(a.ElementType);
-            }
-
-            case "tuple":
-            {
-                var tpl = (TupleTypeNode)t;
-                if (tpl.Components == null) throw new ApplicationException($"Tuple Components is not defined for {tpl.Name}");
-                // dynamic if any component is dynamic
-                return tpl.Components.Any(IsDynamic);
-            }
-
-            case "struct":
-            {
-                var s = (StructTypeNode)t;
-                if (s.Fields == null) throw new ApplicationException($"Struct fields is not defined for {s.Name}");
-                // dynamic if any field’s type is dynamic
-                return s.Fields.Any(f => IsDynamic(f.Type!));
-            }
-
-            default:
-                return false;
+            var p = (PrimitiveFieldType)t;
+            if (p.Name == "string" && !p.Size.HasValue) return true;
+            if (p.Name == "bytes" && !p.Size.HasValue) return true;
+            return false;
         }
+
+        if (t is ArrayTypeNode)
+        {
+            var a = (ArrayTypeNode)t;
+            if (!a.Length.HasValue) return true;
+            if (a.ElementType == null) throw new ApplicationException($"Array is not defined for {a.Name}");
+            return IsDynamic(a.ElementType);
+        }
+
+        if (t is TupleTypeNode)
+        {
+            var tpl = (TupleTypeNode)t;
+            if (tpl.Components == null) throw new ApplicationException($"Tuple Components is not defined for {tpl.Name}");
+            return tpl.Components.Any(IsDynamic);
+        }
+
+        if (t is StructTypeNode)
+        {
+            var s = (StructTypeNode)t;
+            if (s.Fields == null) throw new ApplicationException($"Struct fields is not defined for {s.Name}");
+            return s.Fields.Any(f => IsDynamic(f.Type!));
+        }
+
+        return false;
     }
 }

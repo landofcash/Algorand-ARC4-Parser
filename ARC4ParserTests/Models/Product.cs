@@ -1,6 +1,6 @@
 ﻿namespace Aldemart.ARC4ParserTests.Models
 {
-    using System.Numerics;
+    using Aldemart.ARC4Parser.Converters;
     using ARC4Parser;
     using ARC4ParserTests.Models.Arc4Converters;
 
@@ -59,8 +59,8 @@
         public uint OrderCount { get; set; }
 
         /// <summary>16 B: bitmap of code availability (0 = available, 1 = reserved/sold)</summary>
-        [Arc4Property("codesBitmap")]
-        public BigInteger CodesBitmap { get; set; }
+        [Arc4Property("codesBitmap", typeof(ARC4IntBitmapConverter))]
+        public string CodesBitmap { get; set; }
 
         /// <summary>Variable-length metadata & URI/CID</summary>
         [Arc4Property("codeManifest")]

@@ -1,7 +1,7 @@
 ﻿namespace Aldemart.ARC4ParserTests.Models.Arc4Converters
 {
     using Aldemart.ARC4Parser;
-    using Aldemart.ARC4Parser.PrimitiveDecoders;
+    using Aldemart.ARC4Parser.Converters;
     
     public class DetailsConverter : IPrimitiveConverter
     {

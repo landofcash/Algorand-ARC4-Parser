@@ -1,13 +1,13 @@
-﻿namespace Aldemart.ARC4Parser.Nodes;
+﻿using System.Text.Json.Serialization;
 
-using Newtonsoft.Json;
+namespace Aldemart.ARC4Parser.Nodes;
 
 public class PrimitiveFieldType:TypeNode
 {
-    [JsonProperty("size")]
+    [JsonPropertyName("size")]
     public int? Size { get; set; }
-    [JsonProperty("decoder")]
+    [JsonPropertyName("decoder")]
     public string? Decoder { get; set; }
-    [JsonProperty("converter")]
+    [JsonPropertyName("converter")]
     public string? Converter { get; set; }
 }

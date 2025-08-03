@@ -118,14 +118,14 @@
                 }
 
                 //Primitive
-                if (fieldNode.Type!.Kind == "primitive")
+                if (fieldNode.Type is PrimitiveFieldType)
                 {
                     var primitiveFieldType = (PrimitiveFieldType)fieldNode.Type;
                     var prim = ProcessPrimitive(primitiveFieldType.Name!, primitiveFieldType.Size, decodedResult);
                     property.SetValue(result, prim);
                 }
                 //Struct → just recurse by Type
-                else if (fieldNode.Type.Kind == "struct")
+                else if (fieldNode.Type is StructTypeNode)
                 {
                     var nested = ProcessStruct(property.PropertyType, (StructTypeNode)fieldNode.Type, (Dictionary<string, object?>)decodedResult);
                     property.SetValue(result, nested);

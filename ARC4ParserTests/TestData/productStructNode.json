@@ -49,7 +49,7 @@
     },
     {
       "name": "codesBitmap",
-      "type": { "kind": "primitive", "name": "uint", "size": 16 }
+      "type": { "kind": "primitive", "name": "uint", "size": 16, "converter": "ARC4IntBitmapConverter" }
     },
     {
       "name": "codeManifest",

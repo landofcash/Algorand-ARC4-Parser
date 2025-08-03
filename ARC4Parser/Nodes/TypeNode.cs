@@ -1,12 +1,12 @@
 ﻿namespace Aldemart.ARC4Parser.Nodes;
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
-[JsonConverter(typeof(TypeNodeConverter))]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "kind")]
+[JsonDerivedType(typeof(PrimitiveFieldType),      "primitive")]
+[JsonDerivedType(typeof(StructTypeNode),          "struct")]
 public class TypeNode
 {
-    [JsonProperty("kind")]
-    public string? Kind { get; set; }
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string? Name { get; set; }
 }

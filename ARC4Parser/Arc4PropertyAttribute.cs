@@ -1,6 +1,6 @@
 ﻿namespace Aldemart.ARC4Parser;
 
-using ARC4Parser.PrimitiveDecoders;
+using Aldemart.ARC4Parser.Converters;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class Arc4PropertyAttribute : Attribute
