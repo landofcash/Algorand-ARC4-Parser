@@ -2,8 +2,9 @@
 {
     using Aldemart.ARC4Parser.ARC4Types;
     using Aldemart.ARC4Parser.Nodes;
-    using System.Reflection;
     using Microsoft.Extensions.Logging;
+    using System.Reflection;
+    using System.Text.Json;
 
     public class Arc4Converter
     {
@@ -25,7 +26,20 @@
             Arc4Parser parser = new Arc4Parser(_logger);
             return Process<T>(parser, typeNode, value);
         }
-
+        
+        public T Process<T>(string typeNameJson, byte[] value) where T : new()
+        {
+            Arc4Parser parser = new Arc4Parser(_logger);
+            return Process<T>(parser, typeNameJson, value);
+        }
+        
+        public T Process<T>(Arc4Parser parser, string typeNameJson, byte[] value) where T : new()
+        {
+            StructTypeNode? structTypeNode = JsonSerializer.Deserialize<StructTypeNode>(typeNameJson);
+            if (structTypeNode == null) throw new Exception("Can't deserialize json");
+            return Process<T>(parser, structTypeNode, value);
+        }
+        
         private object? ProcessPrimitive(string fieldName, int? fieldSize, object fieldValue)
         {
             if (fieldValue == null) return fieldValue;
