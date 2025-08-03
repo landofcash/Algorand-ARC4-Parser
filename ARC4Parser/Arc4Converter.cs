@@ -13,13 +13,17 @@
         {
             _logger = logger;
         }
-
-        public T Process<T>(StructTypeNode typeNode, byte[] value) where T : new()
+        public T Process<T>(Arc4Parser parser, StructTypeNode typeNode, byte[] value) where T : new()
         {
-            Arc4Parser parser = new Arc4Parser(_logger);
             var decoded = parser.DecodeValue(typeNode, value);
             if (decoded == null || decoded.Value==null) throw new Exception("Failed to decode DecodeValue");
             return ProcessStruct<T>(typeNode, (Dictionary<string, object?>)decoded.Value);
+        }
+        
+        public T Process<T>(StructTypeNode typeNode, byte[] value) where T : new()
+        {
+            Arc4Parser parser = new Arc4Parser(_logger);
+            return Process<T>(parser, typeNode, value);
         }
 
         private object? ProcessPrimitive(string fieldName, int? fieldSize, object fieldValue)

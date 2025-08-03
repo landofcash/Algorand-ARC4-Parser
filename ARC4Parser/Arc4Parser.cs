@@ -10,29 +10,33 @@ public class PrimitiveDecoderRegistry
     private readonly List<IPrimitiveDecoder> Decoders = new();
     public void RegisterDecoder(IPrimitiveDecoder decoder) => Decoders.Add(decoder);
     public IPrimitiveDecoder? GetDecoder(string typeName) => Decoders.FirstOrDefault(d => d.CanDecode(typeName));
+    public void RemoveDecoder(string name) => Decoders.RemoveAll(x=>x.CanDecode(name));
 }
 
 public class Arc4Parser
 {
     private readonly ILogger _logger;
     public readonly PrimitiveDecoderRegistry PrimitiveDecoderRegistry = new();
-
+    private static List<IPrimitiveDecoder> _defaultPrimitiveDecoders =
+    [
+        new UintDecoder(),
+        new StringDecoder(),
+        new Base64Decoder(),
+        new DateDecoder(),
+        new AddressDecoder(),
+        new BytesDecoder()
+    ];
+    
+    public Arc4Parser(ILogger logger, List<IPrimitiveDecoder> decoders)
+    {
+        _logger = logger;
+        decoders.ForEach(decoder => PrimitiveDecoderRegistry.RegisterDecoder(decoder));
+    }
+    
     public Arc4Parser(ILogger logger)
     {
         _logger = logger;
-        List<IPrimitiveDecoder> defaultPrimitiveDecoders =
-        [
-            new UintDecoder(),
-            new StringDecoder(),
-            new DateDecoder(),
-            new AddressDecoder(),
-            new BytesDecoder()
-        ];
-
-        foreach (var decoder in defaultPrimitiveDecoders)
-        {
-            PrimitiveDecoderRegistry.RegisterDecoder(decoder);
-        }
+        _defaultPrimitiveDecoders.ForEach(decoder => PrimitiveDecoderRegistry.RegisterDecoder(decoder));
     }
 
     public DecodeResult DecodeValue(TypeNode type, byte[] buffer, int offset = 0)
