@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>1.0.6+$([System.DateTime]::Now.ToString("yyyyMMdd'T'HHmmss"))</Version>
+		<Version>1.0.7+$([System.DateTime]::Now.ToString("yyyyMMdd'T'HHmmss"))</Version>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

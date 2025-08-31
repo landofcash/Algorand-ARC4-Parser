@@ -48,6 +48,11 @@
                 return fieldValue.ToString();
             }
 
+            if (fieldName == "uint" && fieldSize == 1 || fieldName == "byte")
+            {
+                return Convert.ToByte(fieldValue);
+            }
+
             if (fieldName == "uint" && fieldSize == 2)
             {
                 return Convert.ToUInt16(fieldValue);
@@ -66,11 +71,6 @@
             if (fieldName == "uint")
             {
                 return ((ARC4Int)fieldValue).RawValue;
-            }
-
-            if (fieldName == "byte")
-            {
-                return Convert.ToByte(fieldValue);
             }
 
             return fieldValue;
